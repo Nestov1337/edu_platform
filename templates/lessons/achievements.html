@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Достижения — EduCode{% endblock %}
+
+{% block content %}
+<h1>🏆 Достижения</h1>
+<p style="color: var(--text-light); margin-bottom: 25px;">Отмечайте свой прогресс и получайте награды</p>
+
+<div class="profile-stats" style="margin-bottom: 35px;">
+    <div class="stat-card">
+        <span class="number">{{ completed_lessons }}</span>
+        <span class="label">Пройдено уроков</span>
+    </div>
+    <div class="stat-card">
+        <span class="number">{{ total_lessons }}</span>
+        <span class="label">Всего уроков</span>
+    </div>
+    <div class="stat-card">
+        <span class="number">{{ progress_percent }}%</span>
+        <span class="label">Прогресс</span>
+    </div>
+</div>
+
+<h2>Ваши награды</h2>
+
+<div class="achievements-grid">
+    {% with target=1 %}
+    <div class="achievement-card {% if completed_lessons < target %}locked{% endif %}">
+        <div class="achievement-icon">★</div>
+        <h4>Новичок</h4>
+        <p>Пройдите первый урок</p>
+        <div class="progress">{% if completed_lessons >= target %}{{ target }}/{{ target }}{% else %}{{ completed_lessons }}/{{ target }}{% endif %}</div>
+    </div>
+    {% endwith %}
+    
+    {% with target=5 %}
+    <div class="achievement-card {% if completed_lessons < target %}locked{% endif %}">
+        <div class="achievement-icon">◆</div>
+        <h4>Ученик</h4>
+        <p>Пройдите 5 уроков</p>
+        <div class="progress">{% if completed_lessons >= target %}{{ target }}/{{ target }}{% else %}{{ completed_lessons }}/{{ target }}{% endif %}</div>
+    </div>
+    {% endwith %}
+    
+    {% with target=10 %}
+    <div class="achievement-card {% if completed_lessons < target %}locked{% endif %}">
+        <div class="achievement-icon">●</div>
+        <h4>Продвинутый</h4>
+        <p>Пройдите 10 уроков</p>
+        <div class="progress">{% if completed_lessons >= target %}{{ target }}/{{ target }}{% else %}{{ completed_lessons }}/{{ target }}{% endif %}</div>
+    </div>
+    {% endwith %}
+    
+    {% with target=25 %}
+    <div class="achievement-card {% if completed_lessons < target %}locked{% endif %}">
+        <div class="achievement-icon">■</div>
+        <h4>Эксперт</h4>
+        <p>Пройдите 25 уроков</p>
+        <div class="progress">{% if completed_lessons >= target %}{{ target }}/{{ target }}{% else %}{{ completed_lessons }}/{{ target }}{% endif %}</div>
+    </div>
+    {% endwith %}
+    
+    {% with target=50 %}
+    <div class="achievement-card {% if completed_lessons < target %}locked{% endif %}">
+        <div class="achievement-icon">👑</div>
+        <h4>Мастер</h4>
+        <p>Пройдите 50 уроков</p>
+        <div class="progress">{% if completed_lessons >= target %}{{ target }}/{{ target }}{% else %}{{ completed_lessons }}/{{ target }}{% endif %}</div>
+    </div>
+    {% endwith %}
+    
+    {% with target=5 %}
+    <div class="achievement-card {% if user_level < target %}locked{% endif %}">
+        <div class="achievement-icon">⭐</div>
+        <h4>Пятизначный</h4>
+        <p>Достигните 5 уровня</p>
+        <div class="progress">{% if user_level >= target %}{{ target }}/{{ target }}{% else %}{{ user_level }}/{{ target }}{% endif %}</div>
+    </div>
+    {% endwith %}
+    
+    {% with target=10 %}
+    <div class="achievement-card {% if user_level < target %}locked{% endif %}">
+        <div class="achievement-icon">🌟</div>
+        <h4>Десятизначный</h4>
+        <p>Достигните 10 уровня</p>
+        <div class="progress">{% if user_level >= target %}{{ target }}/{{ target }}{% else %}{{ user_level }}/{{ target }}{% endif %}</div>
+    </div>
+    {% endwith %}
+    
+    {% with target=500 %}
+    <div class="achievement-card {% if total_xp < target %}locked{% endif %}">
+        <div class="achievement-icon">💰</div>
+        <h4>Заработок</h4>
+        <p>Заработайте 500 XP</p>
+        <div class="progress">{% if total_xp >= target %}{{ target }}/{{ target }}{% else %}{{ total_xp }}/{{ target }}{% endif %}</div>
+    </div>
+    {% endwith %}
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход — EduCode{% endblock %}
+
+{% block content %}
+<h1>Вход в аккаунт</h1>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    
+    {% if form.errors %}
+        <div class="errorlist">
+            <strong>Ошибка!</strong>
+            <ul style="margin: 10px 0 0 20px;">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    
+    <div class="form-group">
+        <label for="id_username">Имя пользователя</label>
+        <input type="text" name="username" id="id_username" required autofocus>
+    </div>
+    
+    <div class="form-group">
+        <label for="id_password">Пароль</label>
+        <input type="password" name="password" id="id_password" required>
+    </div>
+    
+    <button type="submit">Войти</button>
+</form>
+
+<div class="auth-links">
+    <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+</div>
+{% endblock %}

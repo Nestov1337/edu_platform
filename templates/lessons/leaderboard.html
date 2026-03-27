@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Рейтинг участников - EduCode{% endblock %}
+
+{% block content %}
+<h1>🏆 Рейтинг участников</h1>
+<p style="color: var(--text-light); margin-bottom: 25px;">Топ-50 пользователей по опыту</p>
+
+<div style="background: linear-gradient(135deg, var(--primary), var(--accent)); padding: 20px; border-radius: 16px; margin-bottom: 30px; color: white;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h3 style="margin: 0; color: white;">Ваша позиция</h3>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">{{ user_profile.user.username }}</p>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 2rem; font-weight: bold;">#{{ user_rank }}</div>
+            <div style="opacity: 0.9;">{{ user_profile.xp }} XP | Уровень {{ user_profile.level }}</div>
+        </div>
+    </div>
+</div>
+
+<div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: var(--bg); border-bottom: 2px solid var(--border);">
+                <th style="padding: 15px; text-align: left;">#</th>
+                <th style="padding: 15px; text-align: left;">Пользователь</th>
+                <th style="padding: 15px; text-align: center;">Уровень</th>
+                <th style="padding: 15px; text-align: right;">XP</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leader in leaders %}
+            <tr style="border-bottom: 1px solid var(--border); {% if leader.user == user %}background: rgba(14, 165, 233, 0.1);{% endif %}">
+                <td style="padding: 15px; font-weight: bold; color: var(--primary);">
+                    {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}{{ forloop.counter }}{% endif %}
+                </td>
+                <td style="padding: 15px;">
+                    <a href="{% url 'view_user_profile' leader.user.id %}" style="display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none;">
+                        {% if leader.user.profile.avatar %}
+                            <img src="{{ leader.user.profile.avatar.url }}" alt="{{ leader.user.username }}" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
+                        {% else %}
+                            <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                {{ leader.user.username|first|upper }}
+                            </div>
+                        {% endif %}
+                        <span style="font-weight: 500;">{{ leader.user.username }}</span>
+                        {% if leader.user == user %}
+                            <span style="font-size: 0.75rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px;">Вы</span>
+                        {% endif %}
+                    </a>
+                </td>
+                <td style="padding: 15px; text-align: center;">{{ leader.level }}</td>
+                <td style="padding: 15px; text-align: right; font-weight: bold; color: var(--primary);">{{ leader.xp }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="padding: 40px; text-align: center; color: var(--text-light);">
+                    Пока нет участников. Будьте первыми!
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

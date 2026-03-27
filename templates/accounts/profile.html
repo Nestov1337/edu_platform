@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль — {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    {% if user.profile.avatar %}
+        <img src="{{ user.profile.avatar.url }}" alt="Аватар" class="profile-avatar" style="object-fit: cover;">
+    {% else %}
+        <div class="profile-avatar">{{ user.username|first|upper }}</div>
+    {% endif %}
+    <div class="profile-info">
+        <h2>{{ user.username }}</h2>
+        <p>{{ user.email|default:"Email не указан" }}</p>
+        {% if user.profile.bio %}
+            <p style="margin-top: 10px; color: var(--text);">{{ user.profile.bio }}</p>
+        {% endif %}
+        <p style="margin-top: 5px; color: var(--text-light);">
+            Участник с {{ user.date_joined|date:"d.m.Y" }}
+        </p>
+    </div>
+</div>
+
+<div style="margin-bottom: 30px;">
+    <a href="{% url 'edit_profile' %}" class="btn">Редактировать профиль</a>
+</div>
+
+<div style="background: linear-gradient(135deg, var(--primary), var(--accent)); padding: 25px; border-radius: 16px; margin-bottom: 30px; color: white;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="color: white; margin: 0;">Уровень {{ user_level }}</h3>
+        <span style="font-size: 1.2rem; font-weight: bold;">{{ user_xp }} / {{ xp_for_next_level }} XP</span>
+    </div>
+    <div style="background: rgba(255,255,255,0.3); border-radius: 10px; height: 12px; overflow: hidden;">
+        <div style="background: white; height: 100%; border-radius: 10px; width: {{ level_progress }}%; transition: width 0.3s;"></div>
+    </div>
+    <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.9;">
+        {{ xp_to_next_level }} XP до следующего уровня
+    </p>
+    {% if total_xp > user_xp %}
+        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 5px;">
+            (Всего заработано: {{ total_xp }} XP)
+        </p>
+    {% endif %}
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="profile-stats">
+    <div class="stat-card">
+        <span class="number">{{ completed_lessons }}</span>
+        <span class="label">Пройдено уроков</span>
+    </div>
+    <div class="stat-card">
+        <span class="number">{{ total_lessons }}</span>
+        <span class="label">Всего уроков</span>
+    </div>
+    <div class="stat-card">
+        <span class="number">{{ progress_percent }}%</span>
+        <span class="label">Прогресс</span>
+    </div>
+</div>
+
+<h3>Настройки аккаунта</h3>
+<div class="profile-actions" style="margin-bottom: 30px;">
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Выйти из аккаунта</button>
+    </form>
+</div>
+{% endblock %}

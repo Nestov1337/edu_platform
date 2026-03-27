@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Курсы - EduCode{% endblock %}
+
+{% block content %}
+<h1>Доступные курсы</h1>
+<p style="color: var(--text-light); margin-bottom: 25px;">Выберите курс для начала обучения</p>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="courses-grid">
+    {% for course in courses %}
+    <a href="{% url 'lesson_list' course.id %}" class="course-card" style="--course-color: {{ course.color }};">
+        <h3>{{ course.title }}</h3>
+        <p>{{ course.description|truncatewords:20 }}</p>
+        
+        <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: {{ course.progress }}%;"></div>
+        </div>
+        
+        <div class="course-stats">
+            <span class="course-lessons">{{ course.lessons_count }} уроков</span>
+            <span class="course-progress">{{ course.progress }}% завершено</span>
+        </div>
+    </a>
+    {% empty %}
+    <p style="color: var(--text-light); padding: 40px; text-align: center; grid-column: 1/-1;">
+        Курсы пока не добавлены. Обратитесь к администратору.
+    </p>
+    {% endfor %}
+</div>
+{% endblock %}

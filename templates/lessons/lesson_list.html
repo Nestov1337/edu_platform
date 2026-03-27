@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} - EduCode{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <h1>{{ course.title }}</h1>
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'leaderboard' %}" class="btn btn-outline">Рейтинг</a>
+        <a href="{% url 'course_list' %}" class="btn btn-outline">Все курсы</a>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<p style="color: var(--text-light); margin-bottom: 25px;">{{ course.description }}</p>
+
+{% if lessons %}
+    <div class="lessons-grid">
+        {% for lesson in lessons %}
+        <div class="lesson-card {% if not lesson.is_accessible %}locked{% endif %} {% if lesson.is_completed %}completed{% endif %}">
+            <div class="lesson-card-header">
+                <span class="lesson-order">Урок {{ lesson.order }}</span>
+                {% if lesson.is_completed %}
+                    <span class="lesson-status completed">Пройдено</span>
+                {% elif not lesson.is_accessible %}
+                    <span class="lesson-status locked">Заблокировано</span>
+                {% else %}
+                    <span class="lesson-status">В процессе</span>
+                {% endif %}
+            </div>
+            
+            <h3 class="lesson-title">{{ lesson.title }}</h3>
+            
+            {% if lesson.is_control %}
+                <span class="lesson-badge">Контрольная работа</span>
+            {% endif %}
+            
+            <div class="lesson-xp">
+                <span>+{{ lesson.xp_reward }} XP</span>
+            </div>
+            
+            {% if lesson.is_accessible %}
+                <a href="{% url 'lesson_detail' lesson.id %}" class="lesson-card-btn">
+                    {% if lesson.is_completed %}Повторить{% else %}Начать урок{% endif %}
+                </a>
+            {% else %}
+                <button class="lesson-card-btn disabled" disabled>
+                    Закрыто
+                </button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p style="color: var(--text-light); padding: 40px; text-align: center;">
+        В этом курсе пока нет уроков.
+    </p>
+{% endif %}
+
+<div style="margin-top: 50px; border-top: 2px solid var(--border); padding-top: 30px;">
+    <h2 style="margin-bottom: 20px;">💬 Чат курса</h2>
+    
+    <div id="chat-messages" style="max-height: 400px; overflow-y: auto; background: var(--bg); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+        {% for msg in chat_messages %}
+        <div class="chat-message" style="padding: 10px; margin: 5px 0; background: var(--white); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <strong style="color: var(--primary);">{{ msg.user.username }}</strong>
+                <span style="font-size: 0.75rem; color: var(--text-light);">{{ msg.created_at|date:"H:i" }}</span>
+            </div>
+            <p style="margin: 0; color: var(--text);">{{ msg.message }}</p>
+        </div>
+        {% empty %}
+        <p style="color: var(--text-light); text-align: center;">Сообщений пока нет. Будьте первыми!</p>
+        {% endfor %}
+    </div>
+    
+    <form id="chat-form" method="post" action="{% url 'send_chat_message' course.id %}">
+        {% csrf_token %}
+        <div style="display: flex; gap: 10px;">
+            <input type="text" name="message" id="chat-input" placeholder="Напишите сообщение..." style="flex: 1; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem;">
+            <button type="submit" class="btn">Отправить</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.getElementById('chat-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = this;
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    const formData = new FormData(form);
+    
+    fetch('{% url "send_chat_message" course.id %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.messages) {
+            document.getElementById('chat-messages').innerHTML = data.messages;
+            input.value = '';
+            const chatContainer = document.getElementById('chat-messages');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+setInterval(function() {
+    fetch('{% url "get_chat_messages" course.id %}')
+    .then(response => response.json())
+    .then(data => {
+        if (data.messages) {
+            document.getElementById('chat-messages').innerHTML = data.messages;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}, 5000);
+</script>
+{% endblock %}

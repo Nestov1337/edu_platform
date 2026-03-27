@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование профиля - EduCode{% endblock %}
+
+{% block content %}
+<h1>Редактирование профиля</h1>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" style="max-width: 500px;">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label>Аватар</label>
+        {% if profile.avatar %}
+            <div style="margin-bottom: 15px;">
+                <img src="{{ profile.avatar.url }}" alt="Аватар" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
+            </div>
+        {% else %}
+            <div style="margin-bottom: 15px;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; border: 3px solid var(--primary);">
+                    {{ user.username|first|upper }}
+                </div>
+            </div>
+        {% endif %}
+        <input type="file" name="avatar" accept="image/*" style="margin-top: 10px;">
+        <span class="helptext">JPG, PNG, GIF, WebP. Макс. 5 MB</span>
+    </div>
+    
+    <div class="form-group">
+        <label for="username">Имя пользователя</label>
+        <input type="text" name="username" id="username" value="{{ user.username }}" required maxlength="10">
+        <span class="helptext">От 3 до 10 символов</span>
+    </div>
+    
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" value="{{ user.email }}">
+    </div>
+    
+    <div class="form-group">
+        <label for="bio">О себе</label>
+        <textarea name="bio" id="bio" rows="4" maxlength="500" placeholder="Расскажите немного о себе...">{{ profile.bio }}</textarea>
+        <span class="helptext">Максимум 500 символов</span>
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="submit" class="btn">Сохранить изменения</button>
+        <a href="{% url 'profile' %}" class="btn btn-outline">Отмена</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ lesson.title }} — EduCode{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <div>
+        <h1>Урок {{ lesson.order }}: {{ lesson.title }}</h1>
+        {% if is_control %}
+            <span class="status" style="background: #ef4444; margin-left: 10px;">Контрольная работа</span>
+        {% endif %}
+    </div>
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <span style="font-size: 1.1rem; font-weight: 600; color: var(--primary);">
+            +{{ xp_reward }} XP
+        </span>
+        <a href="{% url 'lesson_list' lesson.course.id %}" class="btn btn-outline">Назад к урокам</a>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+{% if last_result and not is_completed %}
+    <div class="alert error" style="margin-bottom: 20px;">
+        <strong>Результат проверки:</strong><br>
+        <pre style="margin: 10px 0 0 0; white-space: pre-wrap; font-family: 'Consolas', monospace;">{{ last_result }}</pre>
+    </div>
+{% endif %}
+
+{% if is_control %}
+<div class="alert info" style="margin-bottom: 20px;">
+    <strong>Контрольная работа</strong><br>
+    {% if attempts_left is not None %}
+        Осталось попыток: <strong>{{ attempts_left }}</strong><br>
+    {% endif %}
+    Код проверяется автоматически по структуре и выводу.
+</div>
+{% endif %}
+
+{% if is_completed %}
+<div class="alert success" style="margin-bottom: 20px;">
+    <strong>✅ Урок пройден!</strong><br>
+    Вы получили {{ xp_reward }} XP
+</div>
+{% endif %}
+
+<div style="margin-bottom: 30px;">
+    <h3>Теория</h3>
+    <p style="line-height: 1.8; color: var(--text);">{{ lesson.content|linebreaks }}</p>
+</div>
+
+<div style="margin-bottom: 30px;">
+    <h3>Задание</h3>
+    <div style="background: var(--bg); padding: 20px; border-radius: 10px; font-family: 'Consolas', monospace; font-size: 0.95rem;">
+        {{ lesson.code_task|linebreaks }}
+    </div>
+    
+    {% if lesson.test_input %}
+    <div style="margin-top: 15px; padding: 15px; background: rgba(14, 165, 233, 0.1); border-radius: 8px;">
+        <strong>Тестовые входные данные:</strong>
+        <pre style="margin: 10px 0 0 0; font-family: 'Consolas', monospace;">{{ lesson.test_input }}</pre>
+    </div>
+    {% endif %}
+    
+    {% if lesson.expected_output %}
+    <div style="margin-top: 10px; padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+        <strong>Ожидаемый вывод:</strong>
+        <pre style="margin: 10px 0 0 0; font-family: 'Consolas', monospace;">{{ lesson.expected_output }}</pre>
+    </div>
+    {% endif %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label>Ваш код:</label>
+        <textarea name="code" rows="12" placeholder="# Напишите ваш код здесь...">{{ saved_code }}</textarea>
+    </div>
+    
+    {% if attempts_left is not None and attempts_left <= 0 and not is_completed %}
+        <button type="button" class="btn" disabled style="opacity: 0.6; cursor: not-allowed;">
+            Попытки исчерпаны
+        </button>
+    {% else %}
+        <button type="submit">Проверить код</button>
+    {% endif %}
+</form>
+
+{% if saved_code and not is_completed %}
+<p style="margin-top: 15px; color: var(--text-light); font-size: 0.9rem;">
+    Ваш код сохранён. Исправьте ошибки и попробуйте снова.
+</p>
+{% endif %}
+
+{% if is_completed %}
+<div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid var(--border); display: flex; gap: 15px; flex-wrap: wrap;">
+    <a href="{% url 'lesson_list' lesson.course.id %}" class="btn btn-outline">
+        ← К списку уроков
+    </a>
+    
+    {% if next_lesson %}
+        <a href="{% url 'lesson_detail' next_lesson.id %}" class="btn" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+            Далее
+        </a>
+    {% else %}
+        <span style="padding: 14px 30px; background: var(--bg); border-radius: 10px; color: var(--text-light); font-weight: 600;">
+            🎉 Это последний урок в курсе!
+        </span>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

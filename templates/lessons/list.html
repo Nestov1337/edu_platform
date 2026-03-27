@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Уроки - EduCode{% endblock %}
+
+{% block content %}
+<h1>🐍 Курс "Основы Python"</h1>
+
+{% if lessons %}
+    <ul>
+        {% for lesson in lessons %}
+        <li>
+            <a href="{% url 'lesson_detail' lesson.id %}">{{ lesson.title }}</a>
+            {% if lesson.is_completed %}
+                <span class="status">Пройдено</span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p style="color: #888;">Уроки пока не добавлены. Обратитесь к администратору.</p>
+{% endif %}
+{% endblock %}
