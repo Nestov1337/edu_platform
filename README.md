@@ -10,13 +10,16 @@
 
 ### Установка зависимостей
 
-**Python** | 3.14.3 | [Скачать](https://www.python.org/downloads/) |
-**Git** | 2.x+ | [Скачать](https://git-scm.com/install/) |
+**Python** | 3.14.3 | 
+Прямая ссылка для Windows installer (64-bit) - [Скачать](https://www.python.org/ftp/python/3.14.3/python-3.14.3-amd64.exe)
+
+
+**Git** | 2.x+ | [Скачать](https://git-scm.com/install/) 
 
 > **Важно:** При установке Python отметьте галочку **"Add Python to PATH"**.
 
 ### Клонирование проекта
-
+### 🔻 Перед этим установите все зависимости!!!!!
 Откройте **PowerShell от имени администратора**:
 
 ```powershell
