@@ -1,3 +1,5 @@
+> [!WARNING]  
+> Ссылка на видео и презу: https://disk.yandex.ru/d/djhUwr6MMKQJlA
 Интерактивная платформа для обучения программированию с нуля.
 
 ![Python](https://img.shields.io/badge/Python-3.14.3-blue.svg)
