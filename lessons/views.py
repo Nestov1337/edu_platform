@@ -111,7 +111,6 @@ def lesson_detail(request, pk):
                 # 🔔 Проверка достижений
                 check_achievements_for_user(request.user)
                 
-                messages.success(request, f'✅ Урок пройден! +{lesson.xp_reward} XP')
             else:
                 messages.info(request, 'Вы уже прошли этот урок')
             
