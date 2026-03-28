@@ -40,7 +40,8 @@ python -m venv venv
 
 # Активируйте его
 .\venv\Scripts\Activate.ps1
-(В случае ошибки введите: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass и ответ на выбор введите: Y.
+(В случае ошибки введите: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass и в
+ответ на выбор введите: Y.
 Повторите команду .\venv\Scripts\Activate.ps1)
 
 # Установка зависимостей Python
